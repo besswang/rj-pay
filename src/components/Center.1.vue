@@ -1,48 +1,59 @@
 <template>
   <div class="hello">
-    <div>
-      <p>订单金额</p>
-      <h1>¥ 678</h1>
-    </div>
-    <h1 class="border-bottom-1px">充值方式</h1>
-    <cube-radio-group>
-      <cube-radio
-        v-for="(option, index) in options4"
-        position="right"
-        :key="index"
-        :option="option"
-        v-model="selected4">
-        <img :src="option.src" />
-        <p v-text="option.label"></p>
-      </cube-radio>
-    </cube-radio-group>
-    <cube-button>确认支付</cube-button>
-    <p>点击确认支付即表示已经同意<router-link to="/agreement">《充值协议》</router-link></p>
+    <cube-input
+      v-model="value"
+      :placeholder="placeholder"
+      :clearable="clearable"
+    >
+    <img slot="append" src="../assets/images/user.png" alt="">
+    </cube-input>
+    <!-- <cube-button @click.stop.prevent="payFn" class="selfbtn" primary>确认支付</cube-button> -->
+    <m-button @click.native="nextFn">下一步</m-button>
+    <m-input
+      v-model="value"
+      :placeholder="placeholder"
+    >
+    <img class="usericon" slot="append" :src="user" alt="">
+    </m-input>
     <!-- <cube-button @click="showToast">show toast</cube-button> -->
   </div>
 </template>
 
 <script>
+import MInput from './common/MInput.vue'
+import { USER } from './meta.js'
 export default {
   name: 'Center',
+  components: {
+    MInput: MInput
+  },
   data () {
     return {
-      selected4: '1',
-      options4: [
-        {
-          label: '1111',
-          value: '1',
-          src: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1516805611092&di=80d0f229dd999ffa3be79d6e317832b0&imgtype=0&src=http%3A%2F%2Fimglf0.ph.126.net%2F1EnYPI5Vzo2fCkyy2GsJKg%3D%3D%2F2829667940890114965.jpg'
-        },
-        {
-          label: '2222',
-          value: '2',
-          src: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1516805611092&di=80d0f229dd999ffa3be79d6e317832b0&imgtype=0&src=http%3A%2F%2Fimglf0.ph.126.net%2F1EnYPI5Vzo2fCkyy2GsJKg%3D%3D%2F2829667940890114965.jpg'
-        }
-      ]
+      user: USER,
+      value: '',
+      placeholder: '请输入内容',
+      clearable: {
+        visible: true,
+        blurHidden: true
+      }
     }
   },
   methods: {
+    nextFn () {
+      const toast = this.$createToast({
+        txt: 'Loading...',
+        time: 10000,
+        mask: true,
+        onTimeout: () => {
+          console.log('Timeout')
+        }
+      })
+      toast.show()
+      setTimeout(() => {
+        toast.hide()
+        this.$router.push('/pay')
+      }, 1000)
+    }
     // showToast () {
     //   this.$createToast({
     //     txt: this.toastTxt
@@ -54,23 +65,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1, h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
-img{
-  width:50px;
-  height:50px;
-  display:block;
-}
+  .usericon{
+    width:30px;
+    height:30px;
+  }
 </style>

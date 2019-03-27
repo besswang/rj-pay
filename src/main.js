@@ -51,7 +51,9 @@ import {
 } from 'cube-ui'
 import App from './App'
 import router from './router'
+import MButton from '@/components/common/MButton.vue'
 
+Vue.component(MButton.name, MButton)
 Vue.use(Button)
 Vue.use(Loading)
 Vue.use(Tip)

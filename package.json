@@ -22,6 +22,8 @@
   "dependencies": {
     "amfe-flexible": "^2.2.1",
     "cube-ui": "~1.12.1",
+    "less": "^3.9.0",
+    "less-loader": "^4.1.0",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1"
   },

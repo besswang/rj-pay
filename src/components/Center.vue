@@ -1,75 +1,156 @@
 <template>
-  <div class="hello">
+  <div class="center">
+
+      <cube-input
+      class="user"
+        v-model="value"
+        :placeholder="placeholder"
+        :clearable="clearable">
+        <img class="usericon" slot="append" :src="user" alt="">
+      </cube-input>
+
+    <p class="title center-title">账户充值</p>
+    <div class="stand-con">
+      <ul class="stand flex flex-direction_row align-items_center flex-wrap text-center">
+        <li class="flex flex-direction_column justify-content_flex-center align-items_center
+        border-top-1px border-right-1px border-bottom-1px border-left-1px"
+          v-for="(item, index) in moneylist" :key="index">
+          <p v-text="item.type"></p>
+          <span v-text="item.money"></span>
+        </li>
+      </ul>
+    </div>
+    <cube-scroll-nav-bar :current="current" :labels="labels" @change="changeHandler" />
     <div class="radio2-con">
-      <p class="title">订单金额</p>
+      <p class="title">自定充值</p>
       <h1 class="money">¥ 678</h1>
+      <div class="area">
+        <cube-textarea v-model="value" placeholder="请填写您的备注信息"></cube-textarea>
+      </div>
     </div>
-    <div class="radio2-con">
-      <h1 class="title border-bottom-1px">充值方式</h1>
-      <cube-radio-group>
-        <cube-radio
-          v-for="(option, index) in options4"
-          position="right"
-          :key="index"
-          :option="option"
-          v-model="selected4">
-          <img class="type-img" :src="option.src" />
-          <p class="subhead" v-text="option.label"></p>
-        </cube-radio>
-      </cube-radio-group>
-    </div>
-    <cube-button class="selfbtn" primary>确认支付</cube-button>
-    <p class="tint">点击确认支付即表示已经同意<router-link to="/agreement" class="theme-color">《充值协议》</router-link></p>
-    <!-- <cube-button @click="showToast">show toast</cube-button> -->
+
+    <m-button @click.native="nextFn">下一步</m-button>
   </div>
 </template>
 
 <script>
+import MInput from './common/MInput.vue'
+import { USER } from './meta.js'
 export default {
   name: 'Center',
+  components: {
+    MInput: MInput
+  },
   data () {
     return {
-      selected4: '1',
-      options4: [
+      user: USER,
+      value: '',
+      placeholder: '请填写您的账户ID',
+      clearable: {
+        visible: true,
+        blurHidden: false
+      },
+      navlist: [
+        {id: 1, name: '欢乐麻将'},
+        {id: 2, name: '火拼双扣'},
+        {id: 3, name: '斗地主'},
+        {id: 4, name: '炸金花'}
+      ],
+      current: '欢乐麻将',
+      labels: ['欢乐麻将', '火拼双扣', '斗地主', '炸金花', '中国象棋'],
+      moneylist: [
         {
-          label: '1111',
-          value: '1',
-          src: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1516805611092&di=80d0f229dd999ffa3be79d6e317832b0&imgtype=0&src=http%3A%2F%2Fimglf0.ph.126.net%2F1EnYPI5Vzo2fCkyy2GsJKg%3D%3D%2F2829667940890114965.jpg'
-        },
-        {
-          label: '2222',
-          value: '2',
-          src: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1516805611092&di=80d0f229dd999ffa3be79d6e317832b0&imgtype=0&src=http%3A%2F%2Fimglf0.ph.126.net%2F1EnYPI5Vzo2fCkyy2GsJKg%3D%3D%2F2829667940890114965.jpg'
+          type: '10元',
+          money: '售价234.00元'
+        }, {
+          type: '10元',
+          money: '售价234.00元'
+        }, {
+          type: '10元',
+          money: '售价234.00元'
+        }, {
+          type: '10元',
+          money: '售价234.00元'
+        }, {
+          type: '10元',
+          money: '售价234.00元'
         }
       ]
     }
   },
   methods: {
-    // showToast () {
-    //   this.$createToast({
-    //     txt: this.toastTxt
-    //   }).show()
-    // }
+    nextFn () {
+      const toast = this.$createToast({
+        txt: 'Loading...',
+        time: 10000,
+        mask: true,
+        onTimeout: () => {
+          console.log('Timeout')
+        }
+      })
+      toast.show()
+      setTimeout(() => {
+        toast.hide()
+        this.$router.push('/pay')
+      }, 1000)
+    },
+    changeHandler (cur) {
+      this.current = cur
+      console.log(cur)
+    }
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
+<style lang="less">
+  @import '../styles/1px.less';
+</style>
 <style scoped>
-.money{
-  font-size:24px;
-  padding:0 0.426667rem;
-}
-.type-img{
-  width:34px;
-  height:34px;
-  display:block;
-  margin-right:10px;
-}
-.selfbtn{
-  width: 90%;
-  margin: 30px auto 0 auto;
-  border-radius: 8px;
-  font-size: 20px;
-}
+  .usericon{
+    width:30px;
+    height:30px;
+  }
+  .money{
+    font-size:32px;
+    padding:0 0.426667rem;
+  }
+  .area{
+    background:#F8F8F8;
+    color:#9B9B9B;
+    margin:.4rem .426667rem 0 .426667rem;
+  }
+  .stand-con{
+    background:#fff;
+    padding:0 12px 15px 12px;
+    margin-bottom:0.213333rem;
+  }
+  .stand li{
+    border-radius: 3px;
+    margin:4px;
+    padding:8px 5px;
+    width:28%;
+  }
+  .stand li.active{
+    border:none;
+    background:url("../assets/images/border.png") no-repeat;
+    background-size:contain;
+  }
+  .stand li>p{
+    font-size:18px;
+    color:#4A4A4A;
+  }
+  .stand li>span{
+    font-size:12px;
+    color:#9B9B9B;
+    padding-top:5px;
+  }
+  .center-title{
+    background:#fff;
+    padding-top:15px;
+  }
+  .user{
+    background:#fff;
+    padding:20px 15px 0 .213333rem;
+  }
 </style>
