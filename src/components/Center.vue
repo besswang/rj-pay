@@ -12,8 +12,7 @@
     <p class="title center-title">账户充值</p>
     <div class="stand-con">
       <ul class="stand flex flex-direction_row align-items_center flex-wrap text-center">
-        <li class="flex flex-direction_column justify-content_flex-center align-items_center
-        border-top-1px border-right-1px border-bottom-1px border-left-1px"
+        <li class="flex flex-direction_column justify-content_flex-center align-items_center vux-1px"
           v-for="(item, index) in moneylist" :key="index">
           <p v-text="item.type"></p>
           <span v-text="item.money"></span>
