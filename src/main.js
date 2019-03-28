@@ -4,6 +4,9 @@ import Vue from 'vue'
 // Only reserve the components on demand and remove the rest.
 // Style is always required.
 import './assets/css/common.css'
+import axios from 'axios'
+import VueAxios from 'vue-axios'
+
 import {
   /* eslint-disable no-unused-vars */
   Style,
@@ -53,6 +56,7 @@ import App from './App'
 import router from './router'
 import MButton from '@/components/common/MButton.vue'
 
+Vue.use(VueAxios, axios)
 Vue.component(MButton.name, MButton)
 Vue.use(Button)
 Vue.use(Loading)
@@ -93,7 +97,6 @@ Vue.use(ScrollNavBar)
 Vue.use(RecycleList)
 
 Vue.config.productionTip = false
-
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

@@ -32,6 +32,36 @@ export default {
       paylist: PAY_LIST
     }
   },
+  mounted () {
+// https://blog.csdn.net/qq_41115965/article/details/80780264
+
+    // Vue.axios.get('/api/get', {
+    //   // get传递的query参数（传递的参数应与后台人员协商，本次模拟不做限制，不做判断）
+    //   params: {
+    //     name: '嬴政',
+    //     age: 45
+    //   }
+    // }).then((response) => {
+    //   // then 指成功之后的回调 (注意：使用箭头函数，可以不考虑this指向)
+    //   console.log(response);
+    // }).catch((error) => {
+    //   // catch 指请求出错的处理
+    //   console.log(error);
+    // });
+    // this.axios.defaults.headers['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8' // 此处是增加的代码，设置请求头的类型
+    // this.axios.get('https://api.github.com/users/octocat/gists').then((response) => {
+    //   // console.log(response.data)
+    // })
+    this.axios.post('/api/third/pay/query').then((response) => {
+      console.log(response)
+    }).catch(err => {
+      console.log('err')
+      console.log(err)
+    })
+    // this.$axios.get('https://api.github.com/users/octocat/gists').then((response) => {
+    //   console.log(response)
+    // })
+  },
   methods: {
     payFn () {
       console.log(this.current)
@@ -46,6 +76,12 @@ export default {
       toast.show()
       setTimeout(() => {
         toast.hide()
+        this.$router.push({
+          path: '/result',
+          query: {
+            type: true
+          }
+        })
       }, 1000)
     }
   }

@@ -7,10 +7,24 @@
   top: 0;
   width: 200%;
   border: 1px solid @c;
+  border-radius: 3px;
   color: @c;
   height: 200%;
   transform-origin: left top;
   transform: scale(0.5);
+}
+.setThemeLine(@c: #FF5A41){
+    content: " ";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 200%;
+    border: 1px solid @c;
+    border-radius: 3px;
+    color: @c;
+    height: 200%;
+    transform-origin: left top;
+    transform: scale(0.5);
 }
 
 .vux-1px,
@@ -27,7 +41,11 @@
     .setLine();
   }
 }
-
+.vux-1px-theme {
+  &:before {
+    .setThemeLine()
+  }
+}
 .vux-1px-t {
   &:before {
     .setTopLine();

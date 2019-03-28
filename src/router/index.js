@@ -3,11 +3,12 @@ import Router from 'vue-router'
 import Center from '@/components/Center'
 import Pay from '@/components/Pay'
 import Agreement from '@/components/Agreement'
+import Result from '@/components/Result'
 Vue.use(Router)
 
 export default new Router({
   mode: 'history', // 消除#
-  base: '/dist',
+  // base: '/dist',
   routes: [
     {
       path: '/',
@@ -21,6 +22,10 @@ export default new Router({
       path: '/agreement',
       name: 'Agreement',
       component: Agreement
+    }, {
+      path: '/result',
+      name: 'Result',
+      component: Result
     }
   ]
 })
