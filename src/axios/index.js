@@ -1,5 +1,7 @@
 import axios from 'axios'
 import qs from 'qs'
+/* global vm */
+/* global t */
 let axiosIns = axios.create({
   headers: {
     'Content-Type': 'application/x-www-form-urlencoded'
@@ -46,32 +48,25 @@ ajaxMethod.forEach((method) => {
          * 这里使用的是第一种方式
          * ......
          */
-        // console.log(response)
-        if (response.data.code === 'SUCCESS') {
+        console.log(response.data.success)
+        if (response.data.success) {
+          console.log('222')
+          window.t = vm.$createToast({
+            txt: 'Loading...',
+            time: 10000,
+            mask: true,
+            onTimeout: () => {
+              console.log('Timeout')
+            }
+          })
+          t.show()
           resolve(response.data)
-          // Message({
-          //   message: response.data.remark,
-          //   type: 'warning'
-          // })
-          // setTimeout(() => {
-          //   window.location.href = process.env.businessHost.host + '/' + process.env.businessHost.projectName + '/#/login'
-          // }, 3000)
-          // toast封装：  参考ele-mint-ui
-          // Toast({
-          //     message: response.data.Message,
-          //     position: 'top',
-          //     duration: 2000
-          // })
-          // if (response.data.Message === '未登录') {
-          //     Toast({
-          //         message: response.data.Message,
-          //         position: '',
-          //         duration: 2000
-          //     })
-          //     //使用vue实例做出对应行为  change state or router
-          //     //instance.$store.commit('isLoginShow',true)
-          // }
         } else {
+          const toast = vm.$createToast({
+            time: 1000,
+            txt: response.data.msg
+          })
+          toast.show()
           resolve(response)
         }
       }).catch(response => {

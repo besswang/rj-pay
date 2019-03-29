@@ -10,18 +10,11 @@
     <p class="title center-title">账户充值</p>
     <div class="stand-con">
       <ul class="stand flex flex-direction_row justify-content_flex-center align-items_center flex-wrap text-center">
-        <!-- <li class="flex flex-direction_column align-items_center vux-1px"
+        <li class="flex flex-direction_column align-items_center vux-1px"
           :class="item.check ? 'active': ''"
           v-for="(item, index) in moneylist" :key="index" @click="moneyType(item)">
           <p>{{item.type}}元</p>
           <span v-text="item.money"></span>
-          <i class="currenticon"></i>
-        </li> -->
-        <li class="flex flex-direction_column align-items_center vux-1px"
-          :class="{'active': currentMoney === index}"
-          v-for="(item, index) in moneylist" :key="index" @click="moneyType(item,index)">
-          <p><span v-text="item"></span>元</p>
-          <span>售价<span v-text="item"></span>.00元</span>
           <i class="currenticon"></i>
         </li>
       </ul>
@@ -32,21 +25,16 @@
       direction="horizontal"
       class="horizontal-scroll-list-wrap">
       <ul class="list-wrapper subhead" ref="items">
-        <!-- <li v-for="(list, i) in navlist" :key="list.id"
+        <li v-for="(list, i) in navlist" :key="list.id"
         class="list-item"
         :class="{'list-item-active': currentNav === i}"
         @click="navClick(i)">
-        {{list.name}}</li> -->
-        <li v-for="(list, i) in navlist" :key="i"
-        class="list-item"
-        :class="{'list-item-active': currentNav === i}"
-        @click="navClick(i)">
-        {{list}}</li>
+        {{list.name}}</li>
       </ul>
     </cube-scroll>
     <div class="radio2-con">
       <p class="title">自定充值</p>
-      <h1 class="money">¥ <span v-text="money"></span></h1>
+      <h1 class="money">¥ <span v-text="currentMoney"></span></h1>
       <div class="area">
         <cube-textarea v-model="remarks" placeholder="请填写您的备注信息"></cube-textarea>
       </div>
@@ -78,44 +66,42 @@ export default {
         visible: true,
         blurHidden: false
       },
-      navlist: [],
       navShow: true,
-      // navlist: [
-      //   {id: 1, name: '欢乐麻将'},
-      //   {id: 2, name: '火拼双扣'},
-      //   {id: 3, name: '斗地主'},
-      //   {id: 4, name: '炸金花'},
-      //   {id: 5, name: '消消乐'},
-      //   {id: 6, name: '中国象棋'}
-      // ],
-      moneylist: []
-      // moneylist: [
-      //   {
-      //     type: 10,
-      //     money: '售价234.00元',
-      //     check: false
-      //   }, {
-      //     type: 20,
-      //     money: '售价234.00元',
-      //     check: true
-      //   }, {
-      //     type: 30,
-      //     money: '售价234.00元',
-      //     check: false
-      //   }, {
-      //     type: 40,
-      //     money: '售价234.00元',
-      //     check: false
-      //   }, {
-      //     type: 50,
-      //     money: '售价234.00元',
-      //     check: false
-      //   }, {
-      //     type: 60,
-      //     money: '售价234.00元',
-      //     check: false
-      //   }
-      // ]
+      navlist: [
+        {id: 1, name: '欢乐麻将'},
+        {id: 2, name: '火拼双扣'},
+        {id: 3, name: '斗地主'},
+        {id: 4, name: '炸金花'},
+        {id: 5, name: '消消乐'},
+        {id: 6, name: '中国象棋'}
+      ],
+      moneylist: [
+        {
+          type: 10,
+          money: '售价234.00元',
+          check: false
+        }, {
+          type: 20,
+          money: '售价234.00元',
+          check: true
+        }, {
+          type: 30,
+          money: '售价234.00元',
+          check: false
+        }, {
+          type: 40,
+          money: '售价234.00元',
+          check: false
+        }, {
+          type: 50,
+          money: '售价234.00元',
+          check: false
+        }, {
+          type: 60,
+          money: '售价234.00元',
+          check: false
+        }
+      ]
     }
   },
 
@@ -130,67 +116,34 @@ export default {
     }
   },
   mounted () {
-    // this.moneylist.map(item => {
-    //   if (item.check) {
-    //     this.currentMoney = item.type
-    //   }
-    // })
+    this.moneylist.map(item => {
+      if (item.check) {
+        this.currentMoney = item.type
+      }
+    })
     if (this.currentNav) {
       // waiting panels loaded
       this.$nextTick(() => {
         this.adjust()
       })
     }
-    this.$axios.post(this.$jk.info, {channelId: this.channelId}).then((res) => {
-      let data = res.data
-      this.moneylist = data.moneyQuotaList
-      if (data.payTypeList.length > 0) {
-        this.navShow = true
-        this.navlist = data.payTypeList
-      } else {
-        this.navShow = false
-      }
-      if (data.payTypeList.length > 0) {
-        this.money = this.moneylist[0]
-      }
-      t.hide()
-    }).catch(err => {
-      console.log(err)
-    })
   },
   methods: {
     navClick (val) {
       this.currentNav = val
     },
-    moneyType (e, i) {
-      // this.currentMoney = e.type
-      this.currentMoney = i
-      this.money = e
-      // this.moneylist.map(item => {
-      //   item.check = false
-      // })
-      // e.check = true
+    moneyType (e) {
+      this.currentMoney = e.type
+      this.moneylist.map(item => {
+        item.check = false
+      })
+      e.check = true
     },
     nextFn () {
       // setTimeout(() => {
       //   toast.hide()
       //   this.$router.push('/pay')
       // }, 1000)
-      const trans = {
-        channelId: this.channelId,
-        money: this.money,
-        accountNotes: this.accountNotes,
-        remarks: this.remarks
-      }
-      this.$axios.post(this.$jk.insert, trans).then((res) => {
-        if (res.success) {
-          /* global t */
-          t.hide()
-          this.$router.push({path: '/pay', query: {money: this.money, orderId: res.data}})
-        }
-      }).catch(err => {
-        console.log(err)
-      })
     },
     adjust () {
       // waiting ui
@@ -225,24 +178,6 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="less">
   @import '../styles/1px.less';
-  // .setThemeLine(@c: #FF5A41){
-  //   content: " ";
-  //   position: absolute;
-  //   left: 0;
-  //   top: 0;
-  //   width: 200%;
-  //   border: 1px solid @c;
-  //   border-radius: 3px;
-  //   color: @c;
-  //   height: 200%;
-  //   transform-origin: left top;
-  //   transform: scale(0.5);
-  // }
-  // .list-item-active{
-  //   &:before {
-  //     .setThemeLine()
-  //   }
-  // }
 </style>
 <style lang="stylus" rel="stylesheet/stylus">
 .horizontal-scroll-list-wrap

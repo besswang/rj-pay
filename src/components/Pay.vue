@@ -69,7 +69,7 @@ export default {
     this.money = this.$route.query.money
     this.orderId = this.$route.query.orderId
     this.$axios.post(this.$jk.query).then((res) => {
-      let data = res.data.data
+      let data = res.data
       let trans = []
       for (let i = 0; i < data.length; i++) {
         data[i]['src'] = PAY_LIST[i].src
@@ -77,6 +77,7 @@ export default {
         trans.push(data[i])
       }
       this.paylist = trans
+      t.hide()
     }).catch(err => {
       console.log(err)
     })
@@ -84,18 +85,9 @@ export default {
   methods: {
     payFn (refId) {
       console.log(this.current)
-      const toast = this.$createToast({
-        txt: 'Loading...',
-        time: 10000,
-        mask: true,
-        onTimeout: () => {
-          console.log('Timeout')
-        }
-      })
-      toast.show()
       if (this.current === 1) { // 微信付款
         this.$axios.post(this.$jk.repayment, {orderId: this.orderId, thirdPayType: 'WX'}).then((res) => {
-          pingpp.createPayment(res.data.data, function (result, err) {
+          pingpp.createPayment(res.data, function (result, err) {
             // object 需是 Charge/Order/Recharge 的 JSON 字符串
             // 可按需使用 alert 方法弹出 log
             // console.log(JSON.stringify(object))
@@ -123,8 +115,9 @@ export default {
         console.log(type)
         const popup = this.$refs[refId]
         this.$axios.post(this.$jk.code, {orderId: this.orderId, thirdPayType: type}).then((res) => {
-          this.codeValue = res.data.data
-          toast.hide()
+          this.codeValue = res.data
+          /* global t */
+          t.hide()
           popup.show()
         }).catch(err => {
           console.log(err)
