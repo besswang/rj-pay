@@ -2,34 +2,48 @@
   <div class="pay">
     <div class="radio2-con">
       <p class="title">订单金额</p>
-      <h1 class="money">¥ 678</h1>
+      <h1 class="money">¥ <span v-text="money"></span></h1>
     </div>
     <div class="radio2-con">
       <h1 class="title border-bottom-1px">充值方式</h1>
       <cube-radio-group v-model="current">
         <cube-radio
-          v-for="(option, index) in paylist"
+          v-for="option in paylist"
           position="right"
-          :key="index"
+          :key="option.id"
           :option="option">
           <img class="type-img" :src="option.src" />
-          <p class="subhead" v-text="option.label"></p>
+          <p class="subhead" v-text="option.name"></p>
         </cube-radio>
       </cube-radio-group>
     </div>
-    <m-button @click.native="payFn">确认支付</m-button>
+    <m-button @click.native="payFn('myPopup')">确认支付</m-button>
     <p class="tint">点击确认支付即表示已经同意<router-link to="/agreement" class="theme-color">《充值协议》</router-link></p>
+    <cube-popup type="my-popup" ref="myPopup"
+    :mask-closable="true">
+    <slot>
+      <vue-qr class="qrcode" :text="codeValue" :size="200" :margin="0"></vue-qr>
+    </slot>
+    </cube-popup>
   </div>
 </template>
 
 <script>
 import { PAY_LIST } from './meta.js'
+import pingpp from 'pingpp-js'
+// https://github.com/Binaryify/vue-qr
+import VueQr from 'vue-qr'
 export default {
   name: 'Pay',
+  components: { VueQr },
   data () {
     return {
+      codeValue: '',
+      money: 0,
+      orderId: 0,
       current: 2,
-      paylist: PAY_LIST
+      paylist: []
+      // paylist: PAY_LIST
     }
   },
   mounted () {
@@ -52,18 +66,23 @@ export default {
     // this.axios.get('https://api.github.com/users/octocat/gists').then((response) => {
     //   // console.log(response.data)
     // })
-    this.axios.post('/api/third/pay/query').then((response) => {
-      console.log(response)
+    this.money = this.$route.query.money
+    this.orderId = this.$route.query.orderId
+    this.$axios.post(this.$jk.query).then((res) => {
+      let data = res.data.data
+      let trans = []
+      for (let i = 0; i < data.length; i++) {
+        data[i]['src'] = PAY_LIST[i].src
+        data[i]['value'] = PAY_LIST[i].value
+        trans.push(data[i])
+      }
+      this.paylist = trans
     }).catch(err => {
-      console.log('err')
       console.log(err)
     })
-    // this.$axios.get('https://api.github.com/users/octocat/gists').then((response) => {
-    //   console.log(response)
-    // })
   },
   methods: {
-    payFn () {
+    payFn (refId) {
       console.log(this.current)
       const toast = this.$createToast({
         txt: 'Loading...',
@@ -74,15 +93,52 @@ export default {
         }
       })
       toast.show()
-      setTimeout(() => {
-        toast.hide()
-        this.$router.push({
-          path: '/result',
-          query: {
-            type: true
-          }
+      if (this.current === 1) { // 微信付款
+        this.$axios.post(this.$jk.repayment, {orderId: this.orderId, thirdPayType: 'WX'}).then((res) => {
+          pingpp.createPayment(res.data.data, function (result, err) {
+            // object 需是 Charge/Order/Recharge 的 JSON 字符串
+            // 可按需使用 alert 方法弹出 log
+            // console.log(JSON.stringify(object))
+            console.log('result:' + result)
+            console.log('err.msg:' + err.msg)
+            console.log('err.extra:' + err.extra)
+            if (result === 'success') {
+              // 只有微信JSAPI (wx_pub)、微信小程序（wx_lite）、QQ 公众号 (qpay_pub)、支付宝小程序（alipay_lite）支付成功的结果会在这里返回，其他的支付结果都会跳转到 extra 中对应的 URL
+            } else if (result === 'fail') {
+              // Ping++ 对象 object 不正确或者微信JSAPI/微信小程序/QQ公众号支付失败时会在此处返回
+            } else if (result === 'cancel') {
+              // 微信JSAPI、微信小程序、QQ 公众号、支付宝小程序支付取消支付
+            }
+          })
+        }).catch(err => {
+          console.log(err)
         })
-      }, 1000)
+      } else {
+        let type = ''
+        if (this.current === 2) {
+          type = 'AILI_PAY'
+        } else {
+          type = 'WX'
+        }
+        console.log(type)
+        const popup = this.$refs[refId]
+        this.$axios.post(this.$jk.code, {orderId: this.orderId, thirdPayType: type}).then((res) => {
+          this.codeValue = res.data.data
+          toast.hide()
+          popup.show()
+        }).catch(err => {
+          console.log(err)
+        })
+      }
+      // setTimeout(() => {
+      //   toast.hide()
+      //   this.$router.push({
+      //     path: '/result',
+      //     query: {
+      //       type: true
+      //     }
+      //   })
+      // }, 1000)
     }
   }
 }
@@ -99,5 +155,8 @@ export default {
   height:34px;
   display:block;
   margin-right:10px;
+}
+.qrcode{
+  border:5px solid #fff;
 }
 </style>

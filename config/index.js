@@ -13,7 +13,8 @@ module.exports = {
     // proxyTable:{},
     proxyTable: {
       '/api':{
-        target: 'http://47.94.142.215:8082', // 测试
+        // target: 'http://47.94.142.215:8082', // 测试
+        target: 'http://rj.51xjsd.com', // 测试
         changeOrigin: true, // 改变源（是否跨域）
         pathRewrite: {
           '^/api': '/'
@@ -64,7 +65,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
+    assetsPublicPath: './',
 
     /**
      * Source Maps

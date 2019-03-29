@@ -2,7 +2,7 @@
   <div class="center">
     <cube-input
       class="user"
-      v-model="value"
+      v-model="accountNotes"
       :placeholder="placeholder"
       :clearable="clearable">
       <img class="usericon" slot="append" :src="user" alt="">
@@ -10,32 +10,45 @@
     <p class="title center-title">账户充值</p>
     <div class="stand-con">
       <ul class="stand flex flex-direction_row justify-content_flex-center align-items_center flex-wrap text-center">
-        <li class="flex flex-direction_column align-items_center vux-1px"
+        <!-- <li class="flex flex-direction_column align-items_center vux-1px"
           :class="item.check ? 'active': ''"
           v-for="(item, index) in moneylist" :key="index" @click="moneyType(item)">
           <p>{{item.type}}元</p>
           <span v-text="item.money"></span>
           <i class="currenticon"></i>
+        </li> -->
+        <li class="flex flex-direction_column align-items_center vux-1px"
+          :class="{'active': currentMoney === index}"
+          v-for="(item, index) in moneylist" :key="index" @click="moneyType(item,index)">
+          <p><span v-text="item"></span>元</p>
+          <span>售价<span v-text="item"></span>.00元</span>
+          <i class="currenticon"></i>
         </li>
       </ul>
     </div>
     <cube-scroll
+      v-if="navShow"
       ref="scroll"
       direction="horizontal"
       class="horizontal-scroll-list-wrap">
       <ul class="list-wrapper subhead" ref="items">
-        <li v-for="(list, i) in navlist" :key="list.id"
+        <!-- <li v-for="(list, i) in navlist" :key="list.id"
         class="list-item"
         :class="{'list-item-active': currentNav === i}"
         @click="navClick(i)">
-        {{list.name}}</li>
+        {{list.name}}</li> -->
+        <li v-for="(list, i) in navlist" :key="i"
+        class="list-item"
+        :class="{'list-item-active': currentNav === i}"
+        @click="navClick(i)">
+        {{list}}</li>
       </ul>
     </cube-scroll>
     <div class="radio2-con">
       <p class="title">自定充值</p>
-      <h1 class="money">¥ {{currentMoney}}</h1>
+      <h1 class="money">¥ <span v-text="money"></span></h1>
       <div class="area">
-        <cube-textarea v-model="value" placeholder="请填写您的备注信息"></cube-textarea>
+        <cube-textarea v-model="remarks" placeholder="请填写您的备注信息"></cube-textarea>
       </div>
     </div>
 
@@ -53,50 +66,56 @@ export default {
   },
   data () {
     return {
+      channelId: 1,
       currentNav: 0,
-      currentMoney: null,
+      currentMoney: 0,
+      money: 0,
       user: USER,
-      value: '',
+      accountNotes: '', // 账号
+      remarks: '', // 备注
       placeholder: '请填写您的账户ID',
       clearable: {
         visible: true,
         blurHidden: false
       },
-      navlist: [
-        {id: 1, name: '欢乐麻将'},
-        {id: 2, name: '火拼双扣'},
-        {id: 3, name: '斗地主'},
-        {id: 4, name: '炸金花'},
-        {id: 5, name: '消消乐'},
-        {id: 6, name: '中国象棋'}
-      ],
-      moneylist: [
-        {
-          type: 10,
-          money: '售价234.00元',
-          check: false
-        }, {
-          type: 20,
-          money: '售价234.00元',
-          check: true
-        }, {
-          type: 30,
-          money: '售价234.00元',
-          check: false
-        }, {
-          type: 40,
-          money: '售价234.00元',
-          check: false
-        }, {
-          type: 50,
-          money: '售价234.00元',
-          check: false
-        }, {
-          type: 60,
-          money: '售价234.00元',
-          check: false
-        }
-      ]
+      navlist: [],
+      navShow: true,
+      // navlist: [
+      //   {id: 1, name: '欢乐麻将'},
+      //   {id: 2, name: '火拼双扣'},
+      //   {id: 3, name: '斗地主'},
+      //   {id: 4, name: '炸金花'},
+      //   {id: 5, name: '消消乐'},
+      //   {id: 6, name: '中国象棋'}
+      // ],
+      moneylist: []
+      // moneylist: [
+      //   {
+      //     type: 10,
+      //     money: '售价234.00元',
+      //     check: false
+      //   }, {
+      //     type: 20,
+      //     money: '售价234.00元',
+      //     check: true
+      //   }, {
+      //     type: 30,
+      //     money: '售价234.00元',
+      //     check: false
+      //   }, {
+      //     type: 40,
+      //     money: '售价234.00元',
+      //     check: false
+      //   }, {
+      //     type: 50,
+      //     money: '售价234.00元',
+      //     check: false
+      //   }, {
+      //     type: 60,
+      //     money: '售价234.00元',
+      //     check: false
+      //   }
+      // ]
     }
   },
 
@@ -104,31 +123,52 @@ export default {
     currentNav (newVal) {
       this.currentNav = newVal
       this.adjust()
+    },
+    currentMoney (newVal) {
+      console.log(newVal)
+      this.currentMoney = newVal
     }
   },
   mounted () {
-    this.moneylist.map(item => {
-      if (item.check) {
-        this.currentMoney = item.type
-      }
-    })
+    // this.moneylist.map(item => {
+    //   if (item.check) {
+    //     this.currentMoney = item.type
+    //   }
+    // })
     if (this.currentNav) {
       // waiting panels loaded
       this.$nextTick(() => {
         this.adjust()
       })
     }
+    this.$axios.post(this.$jk.info, {channelId: this.channelId}).then((res) => {
+      let data = res.data.data
+      this.moneylist = data.moneyQuotaList
+      if (data.payTypeList.length > 0) {
+        this.navShow = true
+        this.navlist = data.payTypeList
+      } else {
+        this.navShow = false
+      }
+      if (data.payTypeList.length > 0) {
+        this.money = this.moneylist[0]
+      }
+    }).catch(err => {
+      console.log(err)
+    })
   },
   methods: {
     navClick (val) {
       this.currentNav = val
     },
-    moneyType (e) {
-      this.currentMoney = e.type
-      this.moneylist.map(item => {
-        item.check = false
-      })
-      e.check = true
+    moneyType (e, i) {
+      // this.currentMoney = e.type
+      this.currentMoney = i
+      this.money = e
+      // this.moneylist.map(item => {
+      //   item.check = false
+      // })
+      // e.check = true
     },
     nextFn () {
       const toast = this.$createToast({
@@ -140,10 +180,24 @@ export default {
         }
       })
       toast.show()
-      setTimeout(() => {
-        toast.hide()
-        this.$router.push('/pay')
-      }, 1000)
+      // setTimeout(() => {
+      //   toast.hide()
+      //   this.$router.push('/pay')
+      // }, 1000)
+      const trans = {
+        channelId: this.channelId,
+        money: this.money,
+        accountNotes: this.accountNotes,
+        remarks: this.remarks
+      }
+      this.$axios.post(this.$jk.insert, trans).then((res) => {
+        if (res.data.code === 'SUCCESS') {
+          toast.hide()
+          this.$router.push({path: '/pay', query: {money: this.money, orderId: res.data.data}})
+        }
+      }).catch(err => {
+        console.log(err)
+      })
     },
     adjust () {
       // waiting ui
@@ -205,6 +259,7 @@ export default {
     display: inline-block
     .cube-scroll-list-wrapper
       height:47px
+      width: calc(100% + 1px)
   .list-wrapper
     white-space: nowrap
   .list-item
