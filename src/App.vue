@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <!--ui库： https://didi.github.io/cube-ui/#/zh-CN -->
     <router-view/>
   </div>
 </template>

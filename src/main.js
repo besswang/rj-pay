@@ -8,7 +8,7 @@ import axios from './axios'
 import jk from './api/jk.js'
 // import axios from 'axios'
 // import VueAxios from 'vue-axios'
-
+// ui库：https://didi.github.io/cube-ui/#/zh-CN
 import {
   /* eslint-disable no-unused-vars */
   Style,
