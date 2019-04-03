@@ -1,5 +1,6 @@
 <template>
   <div class="pay">
+    <!-- https://www.pingxx.com/docs/overview/account/orders/order_createNpay?account=true -->
     <div class="radio2-con">
       <p class="title">订单金额</p>
       <h1 class="money">¥ <span v-text="money"></span></h1>
