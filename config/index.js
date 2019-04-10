@@ -6,7 +6,6 @@ const path = require('path')
 
 module.exports = {
   dev: {
-
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
@@ -17,7 +16,7 @@ module.exports = {
         // target: 'http://rj.51xjsd.com', // 测试
         changeOrigin: true, // 改变源（是否跨域）
         pathRewrite: {
-          '^/api': '/'
+          '^/api': ''
         }
       }
     },

@@ -7,7 +7,7 @@ import Result from '@/components/Result'
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history', // 消除#
+  // mode: 'history', // 消除#
   // base: '/dist',
   routes: [
     {
