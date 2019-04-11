@@ -72,11 +72,25 @@ export default {
     this.$axios.post(this.$jk.query).then((res) => {
       let data = res.data
       let trans = []
+      let sao = [{
+        name: '支付宝扫码支付',
+        src: '',
+        value: 3
+      }, {
+        name: '微信扫码支付',
+        src: '',
+        value: 4
+      }]
       for (let i = 0; i < data.length; i++) {
+        if (data[i].type === 'LINE_SCAN_CODE') {
+          data.splice(i, 1)
+          // 这里给个指令做支付宝/微信扫码的显示和隐藏
+        }
         data[i]['src'] = PAY_LIST[i].src
         data[i]['value'] = PAY_LIST[i].value
         trans.push(data[i])
       }
+      console.log(trans)
       this.paylist = trans
       t.hide()
     }).catch(err => {
@@ -85,24 +99,23 @@ export default {
   },
   methods: {
     payFn (refId) {
-      console.log(this.current)
+      // console.log(this.current)
       if (this.current === 1) { // 微信付款
         this.$axios.post(this.$jk.repayment, {orderId: this.orderId, thirdPayType: 'WX'}).then((res) => {
-          pingpp.createPayment(res.data, function (result, err) {
-            // object 需是 Charge/Order/Recharge 的 JSON 字符串
-            // 可按需使用 alert 方法弹出 log
-            // console.log(JSON.stringify(object))
-            console.log('result:' + result)
-            console.log('err.msg:' + err.msg)
-            console.log('err.extra:' + err.extra)
-            if (result === 'success') {
-              // 只有微信JSAPI (wx_pub)、微信小程序（wx_lite）、QQ 公众号 (qpay_pub)、支付宝小程序（alipay_lite）支付成功的结果会在这里返回，其他的支付结果都会跳转到 extra 中对应的 URL
-            } else if (result === 'fail') {
-              // Ping++ 对象 object 不正确或者微信JSAPI/微信小程序/QQ公众号支付失败时会在此处返回
-            } else if (result === 'cancel') {
-              // 微信JSAPI、微信小程序、QQ 公众号、支付宝小程序支付取消支付
-            }
-          })
+          console.log(res.data)
+          console.log(typeof res.data)
+          const pingData = JSON.stringify(res.data)
+          console.log(typeof pingData)
+          console.log(pingpp)
+          // pingpp.createPayment(pingData, function (result, err) {
+          //   if (result === 'success') {
+
+          //   } else if (result === 'fail') {
+
+          //   } else if (result === 'cancel') {
+
+          //   }
+          // })
         }).catch(err => {
           console.log(err)
         })
