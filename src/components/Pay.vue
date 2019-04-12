@@ -17,6 +17,16 @@
           <p class="subhead" v-text="option.name"></p>
         </cube-radio>
       </cube-radio-group>
+      <cube-radio-group v-if="saoShow" v-model="current">
+        <cube-radio
+          v-for="option in sao"
+          position="right"
+          :key="option.id"
+          :option="option">
+          <img class="type-img" :src="option.src" />
+          <p class="subhead" v-text="option.name"></p>
+        </cube-radio>
+      </cube-radio-group>
     </div>
     <m-button @click.native="payFn('myPopup')">确认支付</m-button>
     <p class="tint">点击确认支付即表示已经同意<router-link to="/agreement" class="theme-color">《充值协议》</router-link></p>
@@ -30,7 +40,7 @@
 </template>
 
 <script>
-import { PAY_LIST } from './meta.js'
+import { PAY_LIST, SAO } from './meta.js'
 import pingpp from 'pingpp-js'
 // https://github.com/Binaryify/vue-qr
 import VueQr from 'vue-qr'
@@ -39,10 +49,12 @@ export default {
   components: { VueQr },
   data () {
     return {
+      sao: SAO,
+      saoShow: false,
       codeValue: '',
       money: 0,
       orderId: 0,
-      current: 2,
+      current: 0,
       paylist: []
       // paylist: PAY_LIST
     }
@@ -72,19 +84,11 @@ export default {
     this.$axios.post(this.$jk.query).then((res) => {
       let data = res.data
       let trans = []
-      let sao = [{
-        name: '支付宝扫码支付',
-        src: '',
-        value: 3
-      }, {
-        name: '微信扫码支付',
-        src: '',
-        value: 4
-      }]
       for (let i = 0; i < data.length; i++) {
         if (data[i].type === 'LINE_SCAN_CODE') {
           data.splice(i, 1)
           // 这里给个指令做支付宝/微信扫码的显示和隐藏
+          this.saoShow = true
         }
         data[i]['src'] = PAY_LIST[i].src
         data[i]['value'] = PAY_LIST[i].value
@@ -99,23 +103,22 @@ export default {
   },
   methods: {
     payFn (refId) {
-      // console.log(this.current)
-      if (this.current === 1) { // 微信付款
-        this.$axios.post(this.$jk.repayment, {orderId: this.orderId, thirdPayType: 'WX'}).then((res) => {
-          console.log(res.data)
-          console.log(typeof res.data)
-          const pingData = JSON.stringify(res.data)
-          console.log(typeof pingData)
-          console.log(pingpp)
-          // pingpp.createPayment(pingData, function (result, err) {
-          //   if (result === 'success') {
-
-          //   } else if (result === 'fail') {
-
-          //   } else if (result === 'cancel') {
-
-          //   }
-          // })
+      if (this.current === 0 || this.current === 1) { // 0:支付宝付款; 1:微信支付
+        const paytype = this.paylist[this.current].type
+        this.$axios.post(this.$jk.repayment, {orderId: this.orderId, thirdPayType: paytype}).then((res) => {
+          if (res.success) {
+            console.log(res.data)
+            const pingData = JSON.stringify(res.data)
+            pingpp.createPayment(pingData, function (result, err) {
+              if (result === 'success') {
+                alert('成功')
+              } else if (result === 'fail') {
+                alert('失败')
+              } else if (result === 'cancel') {
+                alert('取消')
+              }
+            })
+          }
         }).catch(err => {
           console.log(err)
         })
@@ -128,11 +131,14 @@ export default {
         }
         console.log(type)
         const popup = this.$refs[refId]
-        this.$axios.post(this.$jk.code, {orderId: this.orderId, thirdPayType: type}).then((res) => {
-          this.codeValue = res.data
-          /* global t */
-          t.hide()
-          popup.show()
+        this.$axios.post(this.$jk.code, {orderId: this.orderId, thirdPayType: type})
+        .then((res) => {
+          if (res.success) {
+            this.codeValue = res.data
+            /* global t */
+            t.hide()
+            popup.show()
+          }
         }).catch(err => {
           console.log(err)
         })

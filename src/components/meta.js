@@ -8,12 +8,25 @@ export const USER = user
 export const PAY_LIST = [
   {
     label: '支付宝支付',
-    value: 1,
+    value: 0,
     src: pay2
   }, {
     label: '微信支付',
-    value: 2,
+    value: 1,
     src: pay1
+  }
+]
+export const SAO = [
+  {
+    id: 3,
+    name: '支付宝扫码支付',
+    src: pay2,
+    value: 2
+  }, {
+    id: 4,
+    name: '微信扫码支付',
+    src: pay1,
+    value: 3
   }
 ]
 export const RESULT_SUCCESS = {

@@ -252,33 +252,34 @@ export default {
     display: inline-block
     .cube-scroll-list-wrapper
       height:47px
-      width: calc(100% + 1px)
+      width: 100%
+      width calc(100% + .125rem)
   .list-wrapper
     white-space: nowrap
-  .list-item
-    height:46px
-    line-height:46px
-    display: inline-block
-    box-sizing: border-box
-    padding:0 15px
-    background:#fff
-    margin-left:5px
-    position:relative
-    border-radius :2px
-  .list-item-active
-    color:#FF5A41
-    &::before
-      content: " "
-      position: absolute
-      left: 0
-      top: 0
-      width: 200%
-      border: 1px solid #FF5A41
-      border-radius: 2px
-      color: #FF5A41
-      height: 200%
-      transform-origin: left top
-      transform: scale(0.5)
+    .list-item
+      height:46px
+      line-height:46px
+      display: inline-block
+      box-sizing: border-box
+      padding:0 15px
+      background:#fff
+      margin-left:5px
+      position:relative
+      border-radius :2px
+    .list-item-active
+      color:#FF5A41
+      &::before
+        content: " "
+        position: absolute
+        left: 0
+        top: 0
+        width: 200%
+        border: 1px solid #FF5A41
+        border-radius: 2px
+        color: #FF5A41
+        height: 200%
+        transform-origin: left top
+        transform: scale(0.5)
 </style>
 <style scoped>
   .usericon{
