@@ -1,6 +1,5 @@
 <template>
   <div class="pay">
-    <!-- https://www.pingxx.com/docs/overview/account/orders/order_createNpay?account=true -->
     <div class="radio2-con">
       <p class="title">订单金额</p>
       <h1 class="money">¥ <span v-text="money"></span></h1>
@@ -39,7 +38,6 @@
     </cube-popup>
   </div>
 </template>
-
 <script>
 import { PAY_LIST, SAO } from './meta.js'
 import pingpp from 'pingpp-js'
@@ -80,6 +78,11 @@ export default {
     // this.axios.get('https://api.github.com/users/octocat/gists').then((response) => {
     //   // console.log(response.data)
     // })
+
+    // const ip = require('ip')
+    // const IPAddress = ip.address()
+    // console.log(IPAddress)
+
     this.money = this.$route.query.money
     this.orderId = this.$route.query.orderId
     this.$axios.post(this.$jk.query).then((res) => {
@@ -105,12 +108,16 @@ export default {
   methods: {
     payFn (refId) {
       if (this.current === 0 || this.current === 1) { // 0:支付宝付款; 1:微信支付
+        console.log('weixingzhifu')
         const paytype = this.paylist[this.current].type
-        this.$axios.post(this.$jk.repayment, {orderId: this.orderId, thirdPayType: paytype}).then((res) => {
+        const ip = returnCitySN.cip
+        this.$axios.post(this.$jk.repayment, {orderId: this.orderId, thirdPayType: paytype, ip: ip}).then((res) => {
           if (res.success) {
-            console.log(res.data)
             const pingData = JSON.stringify(res.data)
             pingpp.createPayment(pingData, function (result, err) {
+              console.log('result:' + result)
+              console.log('err.msg:' + err.msg)
+              console.log('err.extra:' + err.extra)
               if (result === 'success') {
                 alert('成功')
               } else if (result === 'fail') {
@@ -157,7 +164,6 @@ export default {
   }
 }
 </script>
-
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .money{

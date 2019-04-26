@@ -10,16 +10,11 @@
     <p class="title center-title">账户充值</p>
     <div class="stand-con">
       <ul class="stand flex flex-direction_row justify-content_flex-center align-items_center flex-wrap text-center">
-        <!-- <li class="flex flex-direction_column align-items_center vux-1px"
-          :class="item.check ? 'active': ''"
-          v-for="(item, index) in moneylist" :key="index" @click="moneyType(item)">
-          <p>{{item.type}}元</p>
-          <span v-text="item.money"></span>
-          <i class="currenticon"></i>
-        </li> -->
         <li class="flex flex-direction_column align-items_center vux-1px"
+          v-for="(item, index) in moneylist"
           :class="{'active': currentMoney === index}"
-          v-for="(item, index) in moneylist" :key="index" @click="moneyType(item,index)">
+          :key="index"
+          @click="moneyType(item,index)">
           <p><span v-text="item"></span>元</p>
           <span>售价<span v-text="item"></span>.00元</span>
           <i class="currenticon"></i>
@@ -32,26 +27,24 @@
       direction="horizontal"
       class="horizontal-scroll-list-wrap">
       <ul class="list-wrapper subhead" ref="items">
-        <!-- <li v-for="(list, i) in navlist" :key="list.id"
-        class="list-item"
-        :class="{'list-item-active': currentNav === i}"
-        @click="navClick(i)">
-        {{list.name}}</li> -->
-        <li v-for="(list, i) in navlist" :key="i"
-        class="list-item"
-        :class="{'list-item-active': currentNav === i}"
-        @click="navClick(i)">
-        {{list}}</li>
+        <li class="list-item"
+          v-for="(list, i) in navlist" :key="i"
+          :class="{'list-item-active': currentNav === i}"
+          @click="navClick(i)">
+          {{list}}
+        </li>
       </ul>
     </cube-scroll>
     <div class="radio2-con">
       <p class="title">自定充值</p>
-      <h1 class="money">¥ <span v-text="money"></span></h1>
+      <div class="money flex flex-direction_row align-items_center ">
+        <p>¥ </p>
+        <cube-input style="margin-left:10px;font-size:36px;" class="flex_1" v-model="money" ></cube-input>
+      </div>
       <div class="area">
         <cube-textarea v-model="remarks" placeholder="请填写您的备注信息"></cube-textarea>
       </div>
     </div>
-
     <m-button @click.native="nextFn">下一步</m-button>
   </div>
 </template>
