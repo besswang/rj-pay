@@ -17,7 +17,7 @@ export default {
     return {
       type1: RESULT_SUCCESS,
       type2: RESULT_FAIL,
-      result: ''
+      result: {}
     }
   },
   mounted () {

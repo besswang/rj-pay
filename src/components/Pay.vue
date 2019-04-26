@@ -7,8 +7,9 @@
     </div>
     <div class="radio2-con">
       <h1 class="title border-bottom-1px">充值方式</h1>
-      <cube-radio-group v-model="current">
+      <cube-radio-group v-model="current" class="radio-ul">
         <cube-radio
+          class="radio-li"
           v-for="option in paylist"
           position="right"
           :key="option.id"
@@ -54,7 +55,7 @@ export default {
       codeValue: '',
       money: 0,
       orderId: 0,
-      current: 0,
+      current: 1,
       paylist: []
       // paylist: PAY_LIST
     }
@@ -171,5 +172,8 @@ export default {
 }
 .qrcode{
   border:5px solid #fff;
+}
+.radio-ul>.radio-li:first-child{
+  display:none;
 }
 </style>
